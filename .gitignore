@@ -1,0 +1,6 @@
+structures/*
+simulationData/*
+*.h5
+delimited.txt
+logs/*
+__pycache__/*
