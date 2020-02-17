@@ -12,7 +12,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://zivgitlab.uni-muenster.de/ag-pernice/simframe.git",
-    packages=setuptools.find_packages(),
+    packages=["simFrame"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
