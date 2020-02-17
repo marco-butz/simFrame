@@ -11,7 +11,7 @@ import os
 import h5py
 import sys
 import random
-from collections import Iterable
+from collections.abc import Iterable
 from pathlib import Path
 import string
 
@@ -21,14 +21,14 @@ def randomString(stringLength=32):
     return ''.join(random.choice(letters) for i in range(stringLength))
 
 def simulation(plotMe, plotDir='simulationData/', jobSpecifier='direct-', mat=None):
-    jobName = jobSpecifier + randomString()
-    #print('jobName: ' + jobName)
+    if os.getenv("X_USE_MPI") != "1":
+        jobName = jobSpecifier + randomString()
+    else:
+        jobName = jobSpecifier
     start = time.time()
-    simFrameDir = Path(__file__).resolve().parents[2]
-    simFrameParentDir = Path(__file__).resolve().parents[3]
 
     if str(plotMe) == '1':
-        os.makedirs(os.path.join(simFrameParentDir, plotDir))
+        os.makedirs(plotDir)
         import matplotlib
         #matplotlib.use('Agg')
         from matplotlib import pyplot as plt
@@ -45,9 +45,10 @@ def simulation(plotMe, plotDir='simulationData/', jobSpecifier='direct-', mat=No
     cell = mp.Vector3(mat['dims'][0]*pixelSize/1000, mat['dims'][1]*pixelSize/1000,0)#, mat['dims'][2]*pixelSize/1000)
 
     #generate hdf5 epsilon file
-    h5f = h5py.File(jobName + '_eps.h5', 'a')
-    h5f.create_dataset('epsilon', data=mat['epsilon'])
-    h5f.close()
+    if mp.am_master():
+        h5f = h5py.File(jobName + '_eps.h5', 'a')
+        h5f.create_dataset('epsilon', data=mat['epsilon'])
+        h5f.close()
 
     sourceCenter = [(mat['modeSourcePos'][0][0]+mat['modeSourcePos'][1][0])/2,
                     (mat['modeSourcePos'][0][1]+mat['modeSourcePos'][1][1])/2,
@@ -134,8 +135,8 @@ def simulation(plotMe, plotDir='simulationData/', jobSpecifier='direct-', mat=No
         sim.run(mp.at_every(0.5,animation),until_after_sources=mp.stop_when_fields_decayed(20,mp.Ey,mp.Vector3(outputsCenter[0][0],outputsCenter[0][1],outputsCenter[0][2]),1e-3))
         #sim.init_sim()
         #sim.solve_cw(tol=10**-5,L=20)
-        print('saving animation to ' + str(os.path.join(simFrameParentDir, plotDir + 'animation.gif')))
-        animation.to_gif(10, os.path.join(simFrameParentDir, plotDir + 'inputMode_' + str(mat['modeSourceNum']) + '_' + 'animation.gif'))
+        print('saving animation to ' + str(os.path.join(plotDir + 'animation.gif')))
+        animation.to_gif(10, os.path.join(plotDir + 'inputMode_' + str(mat['modeSourceNum']) + '_' + 'animation.gif'))
     else:
         sim.run(until_after_sources=mp.stop_when_fields_decayed(10,mp.Ey,mp.Vector3(outputsCenter[0][0],outputsCenter[0][1],outputsCenter[0][2]),1e-3))
 
@@ -162,19 +163,19 @@ def simulation(plotMe, plotDir='simulationData/', jobSpecifier='direct-', mat=No
             print('mode coefficients: ' + str(resultingModes[i].alpha[0]) + ' for mode number ' + str(outputsModeNum[i]))
         plt.legend()
         plt.xlabel('Wavelength [nm]')
-        plt.savefig(os.path.join(simFrameParentDir, plotDir + 'inputMode_' + str(mat['modeSourceNum']) + '_' + 'mode_coefficients.png'))
+        plt.savefig(os.path.join(plotDir + 'inputMode_' + str(mat['modeSourceNum']) + '_' + 'mode_coefficients.png'))
         plt.close()
 
         plt.figure()
         plt.imshow(eps_data.transpose(), interpolation='spline36', cmap='binary')
         plt.axis('off')
-        plt.savefig(os.path.join(simFrameParentDir, plotDir + 'inputMode_' + str(mat['modeSourceNum']) + '_' + 'debug_structure.png'))
+        plt.savefig(os.path.join(plotDir + 'inputMode_' + str(mat['modeSourceNum']) + '_' + 'debug_structure.png'))
         plt.close()
 
         inputFourier = [sources[0].src.fourier_transform(1000/f) for f in range(1,1000)]
         plt.figure()
         plt.plot(inputFourier)
-        plt.savefig(os.path.join(simFrameParentDir, plotDir + 'inputMode_' + str(mat['modeSourceNum']) + '_' + 'debug_input_fourier.png'))
+        plt.savefig(os.path.join(plotDir + 'inputMode_' + str(mat['modeSourceNum']) + '_' + 'debug_input_fourier.png'))
         plt.close()
 
         ez_data = numpy.real(sim.get_array(center=mp.Vector3(), size=cell, component=mp.Ez))
@@ -182,15 +183,16 @@ def simulation(plotMe, plotDir='simulationData/', jobSpecifier='direct-', mat=No
         plt.imshow(eps_data.transpose(), interpolation='spline36', cmap='binary')
         plt.imshow(ez_data.transpose(), interpolation='spline36', cmap='RdBu', alpha=0.9)
         plt.axis('off')
-        plt.savefig(os.path.join(simFrameParentDir, plotDir + 'inputMode_' + str(mat['modeSourceNum']) + '_' + 'debug_overlay.png'))
+        plt.savefig(os.path.join(plotDir + 'inputMode_' + str(mat['modeSourceNum']) + '_' + 'debug_overlay.png'))
         plt.close()
 
-    os.remove(jobName + '_eps.h5')
-
     #it might be possible to just reset the structure. will result in speedup
+    mp.all_wait()
     sim.reset_meep()
     end = time.time()
-    print('simulation took ' + str(end - start))
+    if mp.am_master():
+        os.remove(jobName + '_eps.h5')
+        print('simulation took ' + str(end - start))
 
     if __name__ == "__main__":
         jobNameWithoutPath = jobName.split('/')[len(jobName.split('/'))-1]
@@ -211,4 +213,4 @@ if __name__ == "__main__":
     jobName = sys.argv[1]
     plotMe = sys.argv[2]
     mat = sio.loadmat(jobName, squeeze_me=True)
-    simulation(jobName=jobName, plotMe=plotMe, mat=mat)
+    simulation(plotMe=0, plotDir='simulationData/', jobSpecifier=jobName, mat=mat)

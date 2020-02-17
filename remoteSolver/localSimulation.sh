@@ -10,7 +10,7 @@ if [ "$3" == "fdfd" ]; then
   mv results_$1 simulationData/results_$1
 fi
 if [ "$3" == "fdtd" ]; then
-  python3 remoteSolver/fdtd/simulation.py simulationData/$1 $2 > logs/simulationLog_$1.txt
+  mpirun -np 8 python3 remoteSolver/fdtd/simulation.py simulationData/$1 $2 > logs/simulationLog_$1.txt
   rm simulationData/$1
   mv results_$1 simulationData/results_$1
 fi

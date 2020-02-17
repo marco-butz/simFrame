@@ -1,3 +1,5 @@
+__author__= "Marco Butz"
+
 import scipy.io as sio
 import numpy as np
 import random
@@ -27,7 +29,8 @@ def sendSimulationJob(epsilon: np.ndarray,
                         plotDir='simulationData/'):
 
     omega = 2*np.pi/wavelength
-    if os.environ.get('SIMULATE_ON_THIS_MACHINE') ==  None or method != 'fdtd':
+    #if os.environ.get('SIMULATE_ON_THIS_MACHINE') ==  None or method != 'fdtd':
+    if os.environ.get('X_USE_MPI') ==  "1" or method != 'fdtd':
         jobs = []
         jobStates = []
         for mode in inputModes:
@@ -54,7 +57,7 @@ def sendSimulationJob(epsilon: np.ndarray,
                 if jobStates[i] != True:
                     if(os.path.isfile('./simulationData/results_' + jobName)):
                         #print('found results_', jobName)
-                        time.sleep(0.05)
+                        time.sleep(0.01)
                         mat = sio.loadmat('./simulationData/results_' + jobName, squeeze_me=True)
                         if not isinstance(mat['modeNum'], Iterable):
                             matModeNum = [mat['modeNum']]
@@ -76,7 +79,7 @@ def sendSimulationJob(epsilon: np.ndarray,
                         #os.remove('./simulationData/' + jobName)
             sleep(0.05)
     else:
-        #we want to directly call the function instead of launching the interpreter again. Unfortunately we need to do thois serially
+        #we want to directly call the function instead of launching the interpreter again. Unfortunately we need to do this serially
         from .fdtd.simulation import simulation as fdtd
         resultOutputModes = [[dict() for _ in range(len(outputModes))] for _ in range(len(inputModes))]
 
@@ -154,9 +157,6 @@ def sendSimulationJob(epsilon: np.ndarray,
                                                 'inputModePos': mat['inputModePos'],
                                                 'pos': matPos[j]})
 
-    #print('isinstance dict: ', isinstance(resultOutputModes, dict))
-    #print('len res: ', len(resultOutputModes))
-    #print('is this a fucking float? ', isinstance(resultOutputModes, float))
     if isinstance(resultOutputModes, dict):
         resultOutputModes = [resultOutputModes]
 

@@ -80,9 +80,19 @@ class Environment:
 
         return self.FOM(overlaps)
 
+    def printStructure(self, layerIndex: int = 0):
+        for j in range(0,self.dimensions[1]):
+            for i in range(0,self.dimensions[0]):
+                if self.epsilon[i][j][layerIndex] != 1:
+                    sys.stdout.write(str(int(self.epsilon[i][j][0])))
+                else:
+                    sys.stdout.write(' ')
+            print('')
+
 if __name__ == "__main__":
 
     os.environ["SIMULATE_ON_THIS_MACHINE"] = "1"
+    #os.environ["X_USE_MPI"] = "1"
     producePlots = 0
 
     dims = [150, 100, 1]
@@ -122,19 +132,12 @@ if __name__ == "__main__":
     for i in range(100):
         randomGenerator = np.random.default_rng()
         env.flipPixel([randomGenerator.choice(20,1),randomGenerator.choice(20,1)])
-    print(env.structure)
+    env.printStructure()
     print(env.evaluate(plot = producePlots, plotDir = 'simFrame/' + "simulationData/debug5" + '/'))
 
     env.resetStructure()
     for i in range(6,15):
         for j in [9,10]:
             env.flipPixel([i,j])
+    env.printStructure()
     print(env.evaluate(plot = producePlots, plotDir = 'simFrame/' + "simulationData/debug6" + '/'))
-
-    for j in range(0,dims[1]):
-        for i in range(0,dims[0]):
-            if env.epsilon[i][j][0] != 1:
-                sys.stdout.write(str(int(env.epsilon[i][j][0])))
-            else:
-                sys.stdout.write(' ')
-        print('')

@@ -1,10 +1,12 @@
 name: simFrame
 channels:
    - conda-forge
-   - defaults
+   - clawpack
+   - nodefaults
+#   - defaults
 dependencies:
    - python=3.7
-   - pymeep
+   - pymeep=*=mpi_mpich_*
+   - hdf5
    - pip
-   - keras
    - scipy

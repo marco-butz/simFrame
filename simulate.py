@@ -1,3 +1,5 @@
+__author__= "Marco Butz"
+
 from buildStructure import *
 from remoteSolver.sendJob import *
 import sys

@@ -1,3 +1,5 @@
+__author__= "Marco Butz"
+
 import subprocess
 import sys
 from importlib import util
