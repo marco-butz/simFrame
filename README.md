@@ -8,7 +8,7 @@ simFrame is a pixel-structure simulation environment.
 Include pip dependecy in your conda .yml file and add this repo as a pip dependency:
 ```
 - pip:
-     - "--editable=git+https://zivgitlab.uni-muenster.de/ag-pernice/simframe.git@v0.1.0"
+     - "--editable=git+https://zivgitlab.uni-muenster.de/ag-pernice/simframe.git@v0.1.0#egg=simFrame"
 ```
 Additionally include the following dependencies in your conda .yml:
 ```
