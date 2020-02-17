@@ -2,8 +2,8 @@ __author__ = "Marco Butz"
 
 from simFrame.buildStructure import addPlanar, addCentralPlanarPixelStructure
 from simFrame.remoteSolver.sendJob import sendSimulationJob
-import numpy as np
 import simFrame.permittivities as permittivities
+import numpy as np
 import os
 import sys
 
