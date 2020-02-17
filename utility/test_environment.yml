@@ -1,0 +1,12 @@
+name: test_simFrame
+channels:
+   - conda-forge
+   - clawpack
+   - nodefaults
+dependencies:
+   - python=3.7
+   - pymeep=*=mpi_mpich_*
+   - hdf5
+   - scipy
+   - pip:
+     - "--editable=git+https://zivgitlab.uni-muenster.de/ag-pernice/simframe.git@v0.1.0#egg=simFrame"
