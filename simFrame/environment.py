@@ -3,7 +3,7 @@ __author__ = "Marco Butz"
 from buildStructure import addPlanar, addCentralPlanarPixelStructure
 from remoteSolver.sendJob import sendSimulationJob
 import numpy as np
-import permittivities
+import simFrame.permittivities as permittivities
 import os
 import sys
 
