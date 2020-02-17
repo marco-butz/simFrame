@@ -1,6 +1,6 @@
-structures/*
-simulationData/*
+simFrame/structures/*
+simFrame/simulationData/*
 *.h5
-delimited.txt
-logs/*
+simFrame/delimited.txt
+simFrame/logs/*
 __pycache__/*
