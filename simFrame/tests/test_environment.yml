@@ -1,4 +1,4 @@
-name: test_simFrame
+name: simFrame
 channels:
    - conda-forge
    - clawpack
