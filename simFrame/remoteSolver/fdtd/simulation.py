@@ -132,13 +132,13 @@ def simulation(plotMe, plotDir='simulationData/', jobSpecifier='direct-', mat=No
                            normalize=True,
                            field_parameters={'alpha':0.8, 'cmap':'RdBu', 'interpolation':'none'},
                            boundary_parameters={'hatch':'o', 'linewidth':1.5, 'facecolor':'y', 'edgecolor':'b', 'alpha':0.3})
-        sim.run(mp.at_every(0.5,animation),until_after_sources=mp.stop_when_fields_decayed(20,mp.Ey,mp.Vector3(outputsCenter[0][0],outputsCenter[0][1],outputsCenter[0][2]),1e-3))
+        sim.run(mp.at_every(0.5,animation),until_after_sources=mp.stop_when_fields_decayed(20,mp.Ey,mp.Vector3(outputsCenter[0][0],outputsCenter[0][1],outputsCenter[0][2]),1e-5))
         #sim.init_sim()
         #sim.solve_cw(tol=10**-5,L=20)
         print('saving animation to ' + str(os.path.join(plotDir + 'animation.gif')))
         animation.to_gif(10, os.path.join(plotDir + 'inputMode_' + str(mat['modeSourceNum']) + '_' + 'animation.gif'))
     else:
-        sim.run(until_after_sources=mp.stop_when_fields_decayed(10,mp.Ey,mp.Vector3(outputsCenter[0][0],outputsCenter[0][1],outputsCenter[0][2]),1e-3))
+        sim.run(until_after_sources=mp.stop_when_fields_decayed(20,mp.Ey,mp.Vector3(outputsCenter[0][0],outputsCenter[0][1],outputsCenter[0][2]),1e-5))
 
     normModeCoefficients = sim.get_eigenmode_coefficients(normMode, [mat['modeSourceNum']+1], direction=mp.X)
     #print('input norm coefficients TE00: ', numpy.abs(sim.get_eigenmode_coefficients(normMode, [1], direction=mp.X).alpha[0][0][0])**2)
