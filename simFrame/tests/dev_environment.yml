@@ -1,0 +1,10 @@
+name: simFrameDev
+channels:
+   - conda-forge
+   - clawpack
+   - nodefaults
+dependencies:
+   - python=3.7
+   - pymeep=*=mpi_mpich_*
+   - hdf5
+   - scipy
