@@ -40,7 +40,7 @@ def simulation(plotMe, plotDir='simulationData/', jobSpecifier='direct-', mat=No
     pixelSize = mat['pixelSize']
 
     spectralWidth = 300/mat['wavelength']
-    modeFrequencyResolution = 20
+    modeFrequencyResolution = 1
     normOffset = pixelSize/1000 * 10
     cell = mp.Vector3(mat['dims'][0]*pixelSize/1000, mat['dims'][1]*pixelSize/1000,0)#, mat['dims'][2]*pixelSize/1000)
 
