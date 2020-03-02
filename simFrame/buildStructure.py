@@ -82,21 +82,22 @@ def addPlanar(epsilon: np.ndarray,
 if __name__ == '__main__':
     print('testrun')
     SiNThickness = 5
-    dims = [150, 110, 36]
-    designArea = [20, 20]
+    dims = [50, 50, 10]
+    designArea = [10, 10]
     structureScalingFactor = 3 #pixels are 120nm vs 40nm sim resulution
-    structure = np.ones(400)
-    structure = np.loadtxt("structures/sometest.txt", delimiter=',')
+    structure = np.ones(100).reshape(designArea[0], designArea[1])
+    #structure = np.loadtxt("structures/sometest.txt", delimiter=',')
     epsilon = np.array([[[1.0 for i in range(dims[2])] for j in range(dims[1])] for k in range(dims[0])])
-    epsilon = addPlanar(epsilon, [(0, 50),(dims[0]/2, 60)], SiNThickness, 3, 2)
-    epsilon = addPlanar(epsilon, [(dims[0]/2, 60),(dims[0], 70)], SiNThickness, 3, 2)
-    epsilon = addPlanar(epsilon, [(dims[0]/2, 40),(dims[0], 50)], SiNThickness, 3, 2)
+    epsilon = addPlanar(epsilon, [(0, 20),(dims[0]/2, 30)], SiNThickness, 3, 2)
+    epsilon = addPlanar(epsilon, [(dims[0]/2, 20),(dims[0], 30)], SiNThickness, 3, 2)
     epsilon = addCentralPlanarPixelStructure(epsilon, structure, structureScalingFactor, SiNThickness, 3)
     #show what's going on:
-    for j in range(0,dims[1]):
-        for i in range(0,dims[0]):
-            if epsilon[i][j][18] != 1:
-                sys.stdout.write(str(int(epsilon[i][j][18])))
-            else:
-                sys.stdout.write(' ')
-        print('')
+    for k in range(0,dims[2]):
+        print('printing layer ', k, ' ...')
+        for j in range(0,dims[1]):
+            for i in range(0,dims[0]):
+                if epsilon[i][j][k] != 1:
+                    sys.stdout.write(str(int(epsilon[i][j][k])))
+                else:
+                    sys.stdout.write(' ')
+            print('')
