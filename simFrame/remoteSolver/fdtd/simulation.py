@@ -172,25 +172,26 @@ def simulation(plotMe, plotDir='simulationData/', jobSpecifier='direct-', mat=No
         plt.savefig(os.path.join(plotDir + 'inputMode_' + str(mat['modeSourceNum']) + '_' + 'mode_coefficients.png'))
         plt.close()
 
-        plt.figure()
-        plt.imshow(eps_data.transpose(), interpolation='spline36', cmap='binary')
-        plt.axis('off')
-        plt.savefig(os.path.join(plotDir + 'inputMode_' + str(mat['modeSourceNum']) + '_' + 'debug_structure.png'))
-        plt.close()
+        if mat['dims'][2] == 1:
+            plt.figure()
+            plt.imshow(eps_data.transpose(), interpolation='spline36', cmap='binary')
+            plt.axis('off')
+            plt.savefig(os.path.join(plotDir + 'inputMode_' + str(mat['modeSourceNum']) + '_' + 'debug_structure.png'))
+            plt.close()
 
-        inputFourier = [sources[0].src.fourier_transform(1000/f) for f in range(1,1000)]
-        plt.figure()
-        plt.plot(inputFourier)
-        plt.savefig(os.path.join(plotDir + 'inputMode_' + str(mat['modeSourceNum']) + '_' + 'debug_input_fourier.png'))
-        plt.close()
+            inputFourier = [sources[0].src.fourier_transform(1000/f) for f in range(1,1000)]
+            plt.figure()
+            plt.plot(inputFourier)
+            plt.savefig(os.path.join(plotDir + 'inputMode_' + str(mat['modeSourceNum']) + '_' + 'debug_input_fourier.png'))
+            plt.close()
 
-        ez_data = numpy.real(sim.get_array(center=mp.Vector3(), size=cell, component=mp.Ez))
-        plt.figure()
-        plt.imshow(eps_data.transpose(), interpolation='spline36', cmap='binary')
-        plt.imshow(ez_data.transpose(), interpolation='spline36', cmap='RdBu', alpha=0.9)
-        plt.axis('off')
-        plt.savefig(os.path.join(plotDir + 'inputMode_' + str(mat['modeSourceNum']) + '_' + 'debug_overlay.png'))
-        plt.close()
+            ez_data = numpy.real(sim.get_array(center=mp.Vector3(), size=cell, component=mp.Ez))
+            plt.figure()
+            plt.imshow(eps_data.transpose(), interpolation='spline36', cmap='binary')
+            plt.imshow(ez_data.transpose(), interpolation='spline36', cmap='RdBu', alpha=0.9)
+            plt.axis('off')
+            plt.savefig(os.path.join(plotDir + 'inputMode_' + str(mat['modeSourceNum']) + '_' + 'debug_overlay.png'))
+            plt.close()
 
     #it might be possible to just reset the structure. will result in speedup
     mp.all_wait()
