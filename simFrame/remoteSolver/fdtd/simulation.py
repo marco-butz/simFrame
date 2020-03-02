@@ -42,7 +42,12 @@ def simulation(plotMe, plotDir='simulationData/', jobSpecifier='direct-', mat=No
     spectralWidth = 300/mat['wavelength']
     modeFrequencyResolution = 1
     normOffset = pixelSize/1000 * 10
-    cell = mp.Vector3(mat['dims'][0]*pixelSize/1000, mat['dims'][1]*pixelSize/1000,0)#, mat['dims'][2]*pixelSize/1000)
+    if mat['dims'][2] == 1:
+        cell = mp.Vector3(mat['dims'][0]*pixelSize/1000, \
+        mat['dims'][1]*pixelSize/1000, 0)
+    else:
+        cell = mp.Vector3(mat['dims'][0]*pixelSize/1000, \
+        mat['dims'][1]*pixelSize/1000, mat['dims'][2]*pixelSize/1000)
 
     #generate hdf5 epsilon file
     if mp.am_master():
