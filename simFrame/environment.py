@@ -22,6 +22,7 @@ class Environment:
                     inputModes: list,
                     outputModes: list):
 
+        self.designArea = designArea
         self.initialEpsilon = np.array([[[surroundingPermittivity for i in range(dimensions[2])] \
             for j in range(dimensions[1])] \
             for k in range(dimensions[0])])
