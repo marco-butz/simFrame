@@ -47,7 +47,7 @@ class Environment:
     def setStructure(self, structure: np.ndarray):
         self.epsilon = addCentralPlanarPixelStructure(self.epsilon, structure,
             self.structureScalingFactor, self.thickness, self.structurePermittivity)
-        if self.structure == None:
+        if self.structure is None:
             self.initialStructure = structure.copy()
             self.initialEpsilon = self.epsilon.copy()
         self.structure = structure
